@@ -36,8 +36,7 @@ namespace VoteHub.Controllers
                     return RedirectToAction("Login", "Account");
                 }
 
-                var existingVote = await _voteService.GetVoteAsync(electionId, userId);
-                if (existingVote != null)
+                if (!await _voteService.CanVoteAsync(electionId, userId))
                 {
                     TempData["Error"] = "You have already voted in this election";
                     return RedirectToAction("Details", "Election", new { id = electionId });
@@ -64,22 +63,13 @@ namespace VoteHub.Controllers
                     return RedirectToAction("Login", "Account");
                 }
 
-                var existingVote = await _voteService.GetVoteAsync(electionId, userId);
-                if (existingVote != null)
+                if (!await _voteService.CanVoteAsync(electionId, userId))
                 {
                     TempData["Error"] = "You have already voted in this election";
                     return RedirectToAction("Details", "Election", new { id = electionId });
                 }
 
-                var vote = new Vote
-                {
-                    ElectionId = electionId,
-                    CandidateId = candidateId,
-                    UserId = userId,
-                    DateVoted = DateTime.Now
-                };
-
-                await _voteService.CastVoteAsync(vote);
+                await _voteService.CastVoteAsync(electionId, candidateId, userId);
 
                 TempData["Success"] = "Your vote has been cast successfully!";
                 return RedirectToAction("Confirmation", new { electionId });
