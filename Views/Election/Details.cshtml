@@ -1,0 +1,80 @@
+@model VoteHub.Models.Election
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">@Model.Title</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Category:</strong> @Model.Category</p>
+                    <p><strong>Created By:</strong> @Model.Creator?.FullName</p>
+                    <p><strong>Status:</strong> @Model.Status</p>
+                    <p><strong>Start Date:</strong> @Model.StartDate.ToString("MMMM dd, yyyy HH:mm")</p>
+                    <p><strong>End Date:</strong> @Model.EndDate.ToString("MMMM dd, yyyy HH:mm")</p>
+
+                    <hr>
+
+                    <h5>Description</h5>
+                    <p>@Model.Description</p>
+
+                    <h5 class="mt-4">Candidates</h5>
+                    @if (Model.Candidates != null && Model.Candidates.Count > 0)
+                    {
+                        <div class="row">
+                            @foreach (var candidate in Model.Candidates)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@candidate.Name</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">@candidate.Position</h6>
+                                            <p class="card-text">Party: @candidate.Party</p>
+                                            <p class="card-text">@candidate.Biography</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">No candidates added yet.</div>
+                    }
+                </div>
+                <div class="card-footer">
+                    @if (User.Identity.IsAuthenticated && Model.Status == "Open" && Model.EndDate > DateTime.Now)
+                    {
+                        <a href="/Vote/Ballot/@Model.ElectionId" class="btn btn-success">Cast Your Vote</a>
+                    }
+                    else if (!User.Identity.IsAuthenticated)
+                    {
+                        <a href="/Account/Login" class="btn btn-primary">Login to Vote</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary" disabled>Election Closed</button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Info</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Total Votes:</strong> @Model.Votes.Count</p>
+                    <p><strong>Candidates:</strong> @Model.Candidates.Count</p>
+                    <a href="/Statistics/Results/@Model.ElectionId" class="btn btn-info w-100">View Results</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

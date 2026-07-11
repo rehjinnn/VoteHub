@@ -1,0 +1,79 @@
+@model VoteHub.ViewModels.ElectionStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Election Results";
+}
+
+<div class="container mt-5">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white">
+            <h2 class="mb-0"><i class="fas fa-chart-bar"></i> Results: @Model.ElectionTitle</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h5>Total Votes</h5>
+                            <h2 class="text-primary">@Model.TotalVotes</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h5>Total Candidates</h5>
+                            <h2 class="text-info">@Model.TotalCandidates</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light border-success">
+                        <div class="card-body text-center">
+                            <h5>Leading Candidate</h5>
+                            <h3 class="text-success">@Model.Winner?.Name</h3>
+                            <p class="mb-1 text-muted">@Model.Winner?.Position</p>
+                            <p class="mb-0"><strong>@Model.Winner?.VoteCount votes</strong> (@Model.Winner?.Percentage.ToString("F2")%)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h4><i class="fas fa-list"></i> Candidate Rankings</h4>
+            <div class="table-responsive mt-3">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Rank</th>
+                            <th>Position</th>
+                            <th>Candidate</th>
+                            <th>Party</th>
+                            <th>Votes</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CandidateStatistics.Count; i++)
+                        {
+                            var stat = Model.CandidateStatistics[i];
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>@stat.Position</td>
+                                <td><strong>@stat.Name</strong></td>
+                                <td>@stat.Party</td>
+                                <td>@stat.VoteCount</td>
+                                <td>@stat.Percentage.ToString("F2")%</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <a href="/" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>

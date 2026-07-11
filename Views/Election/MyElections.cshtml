@@ -1,0 +1,81 @@
+﻿@model List<VoteHub.Models.Election>
+
+@{
+    ViewData["Title"] = "My Elections";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-poll"></i> My Elections</h1>
+            <a href="/Election/Create" class="btn btn-primary mt-2">
+                <i class="fas fa-plus"></i> Create New Election
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Count > 0)
+    {
+        <div class="row">
+            @foreach (var election in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header" style="background-color: #007bff; color: white;">
+                            <h5 class="card-title mb-0">@election.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">
+                                <small>
+                                    <i class="fas fa-tag"></i> @election.Category
+                                </small>
+                            </p>
+                            <p>@Html.Raw(election.Description?.Substring(0, Math.Min(80, election.Description?.Length ?? 0)) + "...")</p>
+
+                            <div class="mb-2">
+                                @if (election.Status == "Open" && election.EndDate > DateTime.Now)
+                                {
+                                    <span class="badge bg-success"><i class="fas fa-circle"></i> Open</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger"><i class="fas fa-circle"></i> Closed</span>
+                                }
+                            </div>
+
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> @election.StartDate.ToString("MMM dd") - @election.EndDate.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+
+                            <div>
+                                <span class="badge bg-info"><i class="fas fa-users"></i> @election.Candidates.Count Candidates</span>
+                                <span class="badge bg-warning"><i class="fas fa-check"></i> @election.Votes.Count Votes</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <a href="/Election/Manage/@election.ElectionId" class="btn btn-sm btn-primary">
+                                <i class="fas fa-cog"></i> Manage
+                            </a>
+                            <a href="/Statistics/Results/@election.ElectionId" class="btn btn-sm btn-info">
+                                <i class="fas fa-chart-bar"></i> Results
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="fas fa-inbox fa-3x mb-3"></i>
+            <h5>No Elections Yet</h5>
+            <p>You haven't created any elections yet.</p>
+            <a href="/Election/Create" class="btn btn-primary mt-3">
+                <i class="fas fa-plus"></i> Create Your First Election
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Login</h2>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var modelState in ViewData.ModelState.Values)
+                            {
+                                @foreach (var error in modelState.Errors)
+                                {
+                                    <div>@error.ErrorMessage</div>
+                                }
+                            }
+                        </div>
+                    }
+
+                    <form method="post" action="/Account/Login">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <hr>
+
+                    <p class="text-center">
+                        Don't have an account? <a href="/Account/Register">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

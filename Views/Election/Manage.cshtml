@@ -1,0 +1,123 @@
+﻿@model VoteHub.Models.Election
+
+@{
+    ViewData["Title"] = "Manage Election";
+}
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-cog"></i> Manage: @Model.Title</h3>
+        </div>
+        <div class="card-body">
+            <!-- Edit Section -->
+            <h5 class="mb-3">Edit Election Details</h5>
+            <form method="post" action="/Election/Edit">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="electionId" value="@Model.ElectionId" />
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="@Model.Title" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="2">@Model.Description</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="Student Council" selected="@(Model.Category == "Student Council")">Student Council</option>
+                        <option value="Organization" selected="@(Model.Category == "Organization")">Organization</option>
+                        <option value="Club" selected="@(Model.Category == "Club")">Club</option>
+                        <option value="Committee" selected="@(Model.Category == "Committee")">Committee</option>
+                        <option value="Other" selected="@(Model.Category == "Other")">Other</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="datetime-local" class="form-control" id="endDate" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-ddTHH:mm")" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+
+            <hr>
+
+            <!-- Candidates Section -->
+            <h5 class="mb-3">Candidates (@Model.Candidates.Count)</h5>
+            <a href="/Candidate/Add/@Model.ElectionId" class="btn btn-success mb-3">
+                <i class="fas fa-plus"></i> Add Candidate
+            </a>
+
+            @if (Model.Candidates.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Party</th>
+                                <th>Votes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var candidate in Model.Candidates)
+                            {
+                                <tr>
+                                    <td>@candidate.Name</td>
+                                    <td>@candidate.Position</td>
+                                    <td>@candidate.Party</td>
+                                    <td><span class="badge bg-info">@candidate.Votes.Count</span></td>
+                                    <td>
+                                        <a href="/Candidate/Edit/@candidate.CandidateId" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="/Candidate/Delete/@candidate.CandidateId" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this candidate?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">No candidates yet</div>
+            }
+
+            <hr>
+
+            <!-- Delete Election -->
+            <form method="post" action="/Election/Delete/@Model.ElectionId" style="display:inline;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this election? This cannot be undone.')">
+                    <i class="fas fa-trash"></i> Delete Election
+                </button>
+            </form>
+
+            <a href="/Election/MyElections" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+</div>

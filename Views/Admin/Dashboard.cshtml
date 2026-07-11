@@ -1,0 +1,102 @@
+﻿@model VoteHub.ViewModels.AdminDashboardStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid mt-5">
+    <h1 class="mb-4"><i class="fas fa-cog"></i> Admin Dashboard</h1>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-users"></i> Total Users</h5>
+                    <h2>@Model.TotalUsers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-poll"></i> Total Elections</h5>
+                    <h2>@Model.TotalElections</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-vote-yea"></i> Total Votes</h5>
+                    <h2>@Model.TotalVotes</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-user-tie"></i> Total Candidates</h5>
+                    <h2>@Model.TotalCandidates</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-tasks"></i> Admin Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="/Admin/Users" class="btn btn-primary">
+                        <i class="fas fa-users"></i> Manage Users
+                    </a>
+                    <a href="/Admin/Elections" class="btn btn-success">
+                        <i class="fas fa-poll"></i> Manage Elections
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Recent Users</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            <span class="badge bg-primary">@user.Role</span>
+                                        </td>
+                                        <td>@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+﻿@model VoteHub.ViewModels.DashboardStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4"><i class="fas fa-tachometer-alt"></i> My Dashboard</h1>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-poll"></i> My Elections</h5>
+                    <h2 class="card-text">@ViewBag.MyElectionsCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-vote-yea"></i> My Votes</h5>
+                    <h2 class="card-text">@ViewBag.MyVotesCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-globe"></i> Total Elections</h5>
+                    <h2 class="card-text">@Model.TotalElections</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-hourglass-half"></i> Open Elections</h5>
+                    <h2 class="card-text">@Model.OpenElections</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-tasks"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="/Election/Create" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Create New Election
+                    </a>
+                    <a href="/Election/MyElections" class="btn btn-info">
+                        <i class="fas fa-list"></i> View My Elections
+                    </a>
+                    <a href="/" class="btn btn-success">
+                        <i class="fas fa-vote-yea"></i> Browse Elections
+                    </a>
+                    <a href="/Account/Profile" class="btn btn-outline-primary">
+                        <i class="fas fa-user"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info alert-dismissible fade show">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Welcome to VoteHub!</strong>
+                <p class="mb-0">Create elections, manage candidates, and view detailed voting statistics all in one place.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+</div>

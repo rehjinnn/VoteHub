@@ -1,0 +1,89 @@
+﻿@model List<VoteHub.Models.Election>
+
+@{
+    ViewData["Title"] = "Manage Elections";
+}
+
+<div class="container-fluid mt-5">
+    <h1 class="mb-4"><i class="fas fa-poll"></i> Manage Elections</h1>
+
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">All Elections (@Model.Count)</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Creator</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Candidates</th>
+                            <th>Votes</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var election in Model)
+                        {
+                            <tr>
+                                <td>@election.Title</td>
+                                <td>@election.Creator?.FullName</td>
+                                <td>@election.Category</td>
+                                <td>
+                                    @if (election.Status == "Open")
+                                    {
+                                        <span class="badge bg-success">Open</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Closed</span>
+                                    }
+                                </td>
+                                <td><span class="badge bg-info">@election.Candidates.Count</span></td>
+                                <td><span class="badge bg-primary">@election.Votes.Count</span></td>
+                                <td>@election.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <a href="/Election/Details/@election.ElectionId" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@election.ElectionId">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="deleteModal@election.ElectionId" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">Delete Election</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Delete <strong>@election.Title</strong>? This cannot be undone.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="post" action="/Admin/DeleteElection/@election.ElectionId" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <a href="/Admin/Dashboard" class="btn btn-secondary mt-3">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>

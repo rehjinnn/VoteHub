@@ -1,0 +1,100 @@
+﻿@model VoteHub.Models.Candidate
+
+@{
+    ViewData["Title"] = "Edit Candidate";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-edit"></i> Edit Candidate: @Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/Candidate/Edit" enctype="multipart/form-data">
+                        <div class="alert alert-info">
+                            Update the candidate profile and replace the photo only if needed.
+                        </div>
+
+                        <input type="hidden" name="candidateId" value="@Model.CandidateId" />
+
+                        <div class="mb-3">
+                            <label for="photoFile" class="form-label">Candidate Photo</label>
+                            @if (!string.IsNullOrEmpty(Model.Photo))
+                            {
+                                <div class="mb-2">
+                                    <img src="@Model.Photo" alt="@Model.Name" style="max-width: 150px; border-radius: 10px;">
+                                </div>
+                            }
+                            <input type="file" class="form-control" id="photoFile" name="photoFile" accept="image/*">
+                            <small class="form-text text-muted">Leave blank to keep current photo</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="@Model.Name" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="position" class="form-label">Position</label>
+                                <input type="text" class="form-control" id="position" name="position" value="@Model.Position" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="party" class="form-label">Party/Team</label>
+                                <input type="text" class="form-control" id="party" name="party" value="@Model.Party" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="course" class="form-label">Course</label>
+                                <input type="text" class="form-control" id="course" name="course" value="@Model.Course" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="yearLevel" class="form-label">Year Level</label>
+                                <input type="text" class="form-control" id="yearLevel" name="yearLevel" value="@Model.YearLevel" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="qualifications" class="form-label">Qualifications</label>
+                            <textarea class="form-control" id="qualifications" name="qualifications" rows="4" required>@Model.Qualifications</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="leadershipExperience" class="form-label">Leadership Experience</label>
+                            <textarea class="form-control" id="leadershipExperience" name="leadershipExperience" rows="4" required>@Model.LeadershipExperience</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="platform" class="form-label">Platform / Advocacies</label>
+                            <textarea class="form-control" id="platform" name="platform" rows="4" required>@Model.Platform</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="votesAllowed" class="form-label">Votes Allowed for this Position</label>
+                            <select class="form-select" id="votesAllowed" name="votesAllowed" required>
+                                <option value="1" selected="@(Model.VotesAllowed == 1)">1 vote</option>
+                                <option value="2" selected="@(Model.VotesAllowed == 2)">2 votes</option>
+                                <option value="3" selected="@(Model.VotesAllowed == 3)">3 votes</option>
+                                <option value="4" selected="@(Model.VotesAllowed == 4)">4 votes</option>
+                                <option value="5" selected="@(Model.VotesAllowed == 5)">5 votes</option>
+                            </select>
+                        </div>
+
+                        <hr>
+
+                        <button type="submit" class="btn btn-info btn-lg">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="/Election/Manage/@Model.ElectionId" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

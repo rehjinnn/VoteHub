@@ -1,0 +1,97 @@
+﻿@model List<VoteHub.Models.Election>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="fas fa-poll"></i> Available Elections</h1>
+            <p class="text-muted">Browse and participate in ongoing elections</p>
+        </div>
+        <div class="col-md-4">
+            <form method="get" action="/Home/Search" class="input-group">
+                <input type="text" name="keyword" class="form-control" placeholder="Search elections..." />
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row">
+            @foreach (var election in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm election-card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">@election.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">
+                                <small>
+                                    <i class="fas fa-tag"></i> @election.Category
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                @if (!string.IsNullOrEmpty(election.Description))
+                                {
+                                    @Html.Raw(election.Description.Length > 100 ? election.Description.Substring(0, 100) + "..." : election.Description)
+                                }
+                            </p>
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i>
+                                    @election.StartDate.ToString("MMM dd, yyyy") - @election.EndDate.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <small>
+                                    <i class="fas fa-user"></i> By: <strong>@election.Creator?.FullName</strong>
+                                </small>
+                            </div>
+                            <div>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-users"></i> @election.Candidates.Count Candidates
+                                </span>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-check"></i> @election.Votes.Count Votes
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <a href="/Election/Details/@election.ElectionId" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a href="/Vote/Ballot/@election.ElectionId" class="btn btn-sm btn-success">
+                                    <i class="fas fa-vote-yea"></i> Vote
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="fas fa-inbox fa-3x mb-3"></i>
+            <h5>No Elections Available</h5>
+            <p>No open elections at the moment. Please check back later.</p>
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <p>
+                    <a href="/Account/Login" class="btn btn-primary mt-3">
+                        <i class="fas fa-sign-in-alt"></i> Login to Create Elections
+                    </a>
+                </p>
+            }
+        </div>
+    }
+</div>

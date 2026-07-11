@@ -1,0 +1,47 @@
+@model VoteHub.Models.Election
+
+@{
+    ViewData["Title"] = "Vote";
+}
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0"><i class="fas fa-vote-yea"></i> Cast Your Vote: @Model.Title</h2>
+        </div>
+        <div class="card-body">
+            @if (Model.Candidates != null && Model.Candidates.Count > 0)
+            {
+                <form method="post" action="/Vote/CastVote">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="electionId" value="@Model.ElectionId" />
+
+                    <div class="row">
+                        @foreach (var candidate in Model.Candidates)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="card h-100 p-3 candidate-card w-100">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="candidateId" value="@candidate.CandidateId" required>
+                                        <span class="form-check-label fw-bold">@candidate.Name</span>
+                                    </div>
+                                    <div class="small text-muted mt-2">@candidate.Position</div>
+                                    <div class="small">Party: @candidate.Party</div>
+                                    <div class="small">@candidate.Course | Year @candidate.YearLevel</div>
+                                    <p class="mt-2 mb-0">@candidate.Biography</p>
+                                </label>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Submit Vote</button>
+                    <a href="/Election/Details/@Model.ElectionId" class="btn btn-secondary">Cancel</a>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-info">No candidates available for this election.</div>
+            }
+        </div>
+    </div>
+</div>

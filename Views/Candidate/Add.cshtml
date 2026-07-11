@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Add Candidate";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-plus"></i> Add Candidate to: @ViewBag.ElectionTitle</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        Fill out every profile field so voters can compare candidates by position.
+                    </div>
+
+                    <form method="post" action="/Candidate/Add" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="electionId" value="@ViewBag.ElectionId" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Candidate Photo *</label>
+                            <input type="file" class="form-control" name="photoFile" accept="image/*" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Position *</label>
+                                <input type="text" class="form-control" name="position" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Party *</label>
+                                <input type="text" class="form-control" name="party" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Course *</label>
+                                <input type="text" class="form-control" name="course" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Year Level *</label>
+                                <input type="text" class="form-control" name="yearLevel" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Qualifications *</label>
+                            <textarea class="form-control" name="qualifications" rows="3" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Leadership Experience *</label>
+                            <textarea class="form-control" name="leadershipExperience" rows="3" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Platform / Advocacies *</label>
+                            <textarea class="form-control" name="platform" rows="3" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Votes Allowed for this Position *</label>
+                            <select class="form-select" name="votesAllowed" required>
+                                <option value="1" selected>1 vote</option>
+                                <option value="2">2 votes</option>
+                                <option value="3">3 votes</option>
+                                <option value="4">4 votes</option>
+                                <option value="5">5 votes</option>
+                            </select>
+                            <small class="text-muted">Use this to set positions that allow more than one choice.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Candidate
+                        </button>
+                        <a href="/Election/Manage/@ViewBag.ElectionId" class="btn btn-secondary">Back</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
