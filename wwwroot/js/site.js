@@ -86,3 +86,49 @@ function checkPasswordStrength(password) {
     if (/[^a-zA-Z0-9]/.test(password)) strength++;
     return strength;
 }
+
+// Navbar height + scroll behavior
+(function () {
+    function updateNavHeight() {
+        var nav = document.getElementById('mainNavbar');
+        if (!nav) return;
+        var computed = window.getComputedStyle(nav);
+        var height = 0;
+        if (computed && computed.height) {
+            height = Math.ceil(parseFloat(computed.height)) || 0;
+        }
+        if (!height) height = nav.offsetHeight || 0;
+        document.documentElement.style.setProperty('--nav-height', height + 'px');
+        try {
+            document.body.style.paddingTop = height + 'px';
+        } catch (e) {
+            // ignore if body style cannot be set
+        }
+    }
+
+    function onScroll() {
+        var nav = document.getElementById('mainNavbar');
+        if (!nav) return;
+        if ((window.scrollY || window.pageYOffset) > 20) {
+            nav.classList.add('navbar-scrolled');
+        } else {
+            nav.classList.remove('navbar-scrolled');
+        }
+    }
+
+    var resizeTimer = null;
+    function onResizeDebounced() {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            updateNavHeight();
+            onScroll();
+        }, 100);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateNavHeight();
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onResizeDebounced);
+    });
+})();

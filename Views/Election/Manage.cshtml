@@ -6,7 +6,7 @@
 
 <div class="container mt-5">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-msu text-white">
             <h3 class="mb-0"><i class="fas fa-cog"></i> Manage: @Model.Title</h3>
         </div>
         <div class="card-body">
@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-msu">
                     <i class="fas fa-save"></i> Save Changes
                 </button>
             </form>
@@ -82,9 +82,9 @@
                                     <td>@candidate.Name</td>
                                     <td>@candidate.Position</td>
                                     <td>@candidate.Party</td>
-                                    <td><span class="badge bg-info">@candidate.Votes.Count</span></td>
+                                    <td><span class="badge bg-sage">@candidate.Votes.Count</span></td>
                                     <td>
-                                        <a href="/Candidate/Edit/@candidate.CandidateId" class="btn btn-sm btn-outline-primary">
+                                        <a href="/Candidate/Edit/@candidate.CandidateId" class="btn btn-sm btn-outline-msu">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form method="post" action="/Candidate/Delete/@candidate.CandidateId" style="display:inline;">

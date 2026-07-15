@@ -43,11 +43,11 @@
                                         <span class="badge bg-danger">Closed</span>
                                     }
                                 </td>
-                                <td><span class="badge bg-info">@election.Candidates.Count</span></td>
-                                <td><span class="badge bg-primary">@election.Votes.Count</span></td>
+                                <td><span class="badge bg-sage">@election.Candidates.Count</span></td>
+                                <td><span class="badge bg-msu">@election.Votes.Count</span></td>
                                 <td>@election.CreatedAt.ToString("MMM dd, yyyy")</td>
                                 <td>
-                                    <a href="/Election/Details/@election.ElectionId" class="btn btn-sm btn-info">
+                                    <a href="/Election/Details/@election.ElectionId" class="btn btn-sm btn-sage">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@election.ElectionId">

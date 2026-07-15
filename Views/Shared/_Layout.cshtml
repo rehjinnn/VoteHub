@@ -12,12 +12,26 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body class="d-flex flex-column min-vh-100">
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    bool isHome = string.Equals(currentController, "Home", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+    var bodyClass = isHome ? "homepage" : string.Empty;
+    bool isDashboard = string.Equals(currentController, "Home", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Dashboard", StringComparison.OrdinalIgnoreCase);
+    bool isMyElections = string.Equals(currentController, "Election", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "MyElections", StringComparison.OrdinalIgnoreCase);
+    bool isCreateElection = string.Equals(currentController, "Election", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Create", StringComparison.OrdinalIgnoreCase);
+    bool isAdminDashboard = string.Equals(currentController, "Admin", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Dashboard", StringComparison.OrdinalIgnoreCase);
+    bool isLogin = string.Equals(currentController, "Account", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Login", StringComparison.OrdinalIgnoreCase);
+    bool isRegister = string.Equals(currentController, "Account", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Register", StringComparison.OrdinalIgnoreCase);
+}
+<body class="d-flex flex-column min-vh-100 @bodyClass">
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-transparent sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-vote-yea"></i> VoteHub
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="~/images/msu-logo.png" class="msu-logo me-2" alt="Mindoro State University" />
+                <span class="msu-name me-3">Mindoro State University</span>
+                <span class="site-name fw-bold">VoteHub</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -25,25 +39,25 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link @(isHome ? "active" : "")" href="/">Home</a>
                     </li>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Home/Dashboard">Dashboard</a>
+                            <a class="nav-link @(isDashboard ? "active" : "")" href="/Home/Dashboard">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Election/MyElections">My Elections</a>
+                            <a class="nav-link @(isMyElections ? "active" : "")" href="/Election/MyElections">My Elections</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Election/Create">
+                            <a class="nav-link @(isCreateElection ? "active" : "")" href="/Election/Create">
                                 <i class="fas fa-plus"></i> Create Election
                             </a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="/Admin/Dashboard">
+                                <a class="nav-link @(isAdminDashboard ? "active" : "")" href="/Admin/Dashboard">
                                     <i class="fas fa-cog"></i> Admin
                                 </a>
                             </li>
@@ -73,10 +87,10 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Account/Login">Login</a>
+                            <a class="nav-link @(isLogin ? "active" : "")" href="/Account/Login">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Account/Register">Register</a>
+                            <a class="nav-link @(isRegister ? "active" : "")" href="/Account/Register">Register</a>
                         </li>
                     }
                 </ul>
@@ -86,7 +100,7 @@
 
     <!-- Main Content -->
     <main class="py-4 flex-grow-1">
-        <div class="container">
+        <div class="container page-panel">
             <!-- Alert Messages -->
             @if (TempData["Success"] != null)
             {
@@ -131,5 +145,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <!-- Custom JS -->
     <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
+

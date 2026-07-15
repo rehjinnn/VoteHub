@@ -1,42 +1,126 @@
-@model VoteHub.Models.Election
+﻿@model VoteHub.Models.Election
+@using System.Text.RegularExpressions
 
 @{
     ViewData["Title"] = "Vote";
 }
 
+@functions {
+    string GetPartyColor(string party)
+    {
+        if (string.IsNullOrWhiteSpace(party))
+            return "#6c757d";
+
+        var colors = new[] { "#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1", "#fd7e14", "#20c997" };
+        var hash = 0;
+        foreach (var ch in party)
+            hash = (hash * 31) + ch;
+
+        return colors[Math.Abs(hash) % colors.Length];
+    }
+
+    string SanitizePositionId(string position)
+    {
+        return Regex.Replace(position?.ToLowerInvariant() ?? string.Empty, "[^a-z0-9]+", "_").Trim('_');
+    }
+}
+
 <div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
+    <div class="card shadow ballot-card">
+        <div class="card-header bg-msu text-white">
             <h2 class="mb-0"><i class="fas fa-vote-yea"></i> Cast Your Vote: @Model.Title</h2>
         </div>
         <div class="card-body">
             @if (Model.Candidates != null && Model.Candidates.Count > 0)
             {
-                <form method="post" action="/Vote/CastVote">
+                <form method="post" action="/Vote/CastVote" id="ballotForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="electionId" value="@Model.ElectionId" />
 
-                    <div class="row">
-                        @foreach (var candidate in Model.Candidates)
-                        {
-                            <div class="col-md-6 mb-3">
-                                <label class="card h-100 p-3 candidate-card w-100">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="candidateId" value="@candidate.CandidateId" required>
-                                        <span class="form-check-label fw-bold">@candidate.Name</span>
-                                    </div>
-                                    <div class="small text-muted mt-2">@candidate.Position</div>
-                                    <div class="small">Party: @candidate.Party</div>
-                                    <div class="small">@candidate.Course | Year @candidate.YearLevel</div>
-                                    <p class="mt-2 mb-0">@candidate.Biography</p>
-                                </label>
+                    @foreach (var position in Model.Candidates.Select(c => c.Position).Distinct().OrderBy(p => p))
+                    {
+                        var positionId = SanitizePositionId(position);
+                        var candidates = Model.Candidates.Where(c => c.Position == position).ToList();
+                        <div class="mb-5 position-group" data-position="@positionId">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="position-title mb-0">@position</h4>
+                                <span class="badge bg-secondary">Choose 1</span>
                             </div>
-                        }
-                    </div>
+                            <div class="row g-3">
+                                @for (int i = 0; i < candidates.Count; i++)
+                                {
+                                    var candidate = candidates[i];
+                                    var color = GetPartyColor(candidate.Party);
+                                    <div class="col-md-6 col-lg-4">
+                                        <label class="card h-100 p-3 candidate-card" for="candidate_@candidate.CandidateId" style="border-left: 6px solid @color;">
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input position-radio" type="radio" id="candidate_@candidate.CandidateId" name="position_@positionId" value="@candidate.CandidateId" @(i == 0 ? "required" : null) />
+                                                <span class="form-check-label fw-bold ms-2">@candidate.Name</span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <span class="badge badge-party" style="background:@color;">@candidate.Party</span>
+                                            </div>
+                                            <div class="small text-muted mb-2">@candidate.Course | Year @candidate.YearLevel</div>
+                                            @if (!string.IsNullOrWhiteSpace(candidate.Photo))
+                                            {
+                                                <div class="my-3 text-center">
+                                                    <img src="@candidate.Photo" alt="@candidate.Name" class="img-fluid rounded candidate-photo" />
+                                                </div>
+                                            }
+                                            <p class="mt-2 mb-0 candidate-summary">@candidate.Biography</p>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
 
-                    <button type="submit" class="btn btn-success">Submit Vote</button>
-                    <a href="/Election/Details/@Model.ElectionId" class="btn btn-secondary">Cancel</a>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">Submit Vote</button>
+                        <a href="/Election/Details/@Model.ElectionId" class="btn btn-secondary btn-lg">Cancel</a>
+                    </div>
                 </form>
+
+                <script>
+                    (function () {
+                        var form = document.getElementById('ballotForm');
+                        var groups = document.querySelectorAll('.position-group');
+
+                        groups.forEach(function (group) {
+                            group.addEventListener('change', function (event) {
+                                if (!event.target.classList.contains('position-radio')) return;
+                                group.querySelectorAll('.candidate-card').forEach(function (card) {
+                                    card.classList.remove('selected');
+                                });
+                                var selectedCard = event.target.closest('.candidate-card');
+                                if (selectedCard) {
+                                    selectedCard.classList.add('selected');
+                                }
+                            });
+                        });
+
+                        form.addEventListener('submit', function (event) {
+                            var selectedRadios = document.querySelectorAll('.position-group input[type="radio"]:checked');
+                            if (selectedRadios.length !== groups.length) {
+                                event.preventDefault();
+                                alert('Please choose one candidate for each position.');
+                                return;
+                            }
+
+                            document.querySelectorAll('input[name="candidateIds"]').forEach(function (input) {
+                                input.remove();
+                            });
+
+                            selectedRadios.forEach(function (radio) {
+                                var hidden = document.createElement('input');
+                                hidden.type = 'hidden';
+                                hidden.name = 'candidateIds';
+                                hidden.value = radio.value;
+                                form.appendChild(hidden);
+                            });
+                        });
+                    })();
+                </script>
             }
             else
             {

@@ -8,7 +8,7 @@
     <div class="row mb-4">
         <div class="col-md-12">
             <h1><i class="fas fa-poll"></i> My Elections</h1>
-            <a href="/Election/Create" class="btn btn-primary mt-2">
+            <a href="/Election/Create" class="btn btn-msu mt-2">
                 <i class="fas fa-plus"></i> Create New Election
             </a>
         </div>
@@ -21,7 +21,7 @@
             {
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <div class="card-header" style="background-color: #007bff; color: white;">
+                        <div class="card-header bg-msu text-white">
                             <h5 class="card-title mb-0">@election.Title</h5>
                         </div>
                         <div class="card-body">
@@ -50,15 +50,15 @@
                             </div>
 
                             <div>
-                                <span class="badge bg-info"><i class="fas fa-users"></i> @election.Candidates.Count Candidates</span>
+                                <span class="badge bg-sage"><i class="fas fa-users"></i> @election.Candidates.Count Candidates</span>
                                 <span class="badge bg-warning"><i class="fas fa-check"></i> @election.Votes.Count Votes</span>
                             </div>
                         </div>
                         <div class="card-footer bg-light">
-                            <a href="/Election/Manage/@election.ElectionId" class="btn btn-sm btn-primary">
+                            <a href="/Election/Manage/@election.ElectionId" class="btn btn-sm btn-msu">
                                 <i class="fas fa-cog"></i> Manage
                             </a>
-                            <a href="/Statistics/Results/@election.ElectionId" class="btn btn-sm btn-info">
+                            <a href="/Statistics/Results/@election.ElectionId" class="btn btn-sm btn-sage">
                                 <i class="fas fa-chart-bar"></i> Results
                             </a>
                         </div>
@@ -73,7 +73,7 @@
             <i class="fas fa-inbox fa-3x mb-3"></i>
             <h5>No Elections Yet</h5>
             <p>You haven't created any elections yet.</p>
-            <a href="/Election/Create" class="btn btn-primary mt-3">
+            <a href="/Election/Create" class="btn btn-msu mt-3">
                 <i class="fas fa-plus"></i> Create Your First Election
             </a>
         </div>

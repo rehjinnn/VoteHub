@@ -4,16 +4,68 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="container mt-5">
+<div class="hero-section py-5 text-white">
+    <div class="row align-items-center gy-4">
+        <div class="col-lg-7">
+            <span class="badge text-uppercase mb-3" style="background: rgba(231, 176, 76, 0.18); color: var(--golden-orange);">Mindoro State University Official Voting</span>
+            <h1 class="display-5 fw-bold" style="color: #fff;">VoteHub</h1>
+            <p class="lead lh-lg" style="color: rgba(255, 255, 255, 0.88);">VoteHub brings transparent, secure, and student-centered election management to Mindoro State University. Organize ballots by position, engage the student body, and view results with clarity—while preserving voter privacy.</p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <a class="btn btn-msu btn-lg" href="#about">
+                    Learn More
+                </a>
+                <a class="btn btn-secondary btn-lg" href="/Election/MyElections">
+                    My Elections
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="hero-card p-4 shadow-lg">
+                <h3 class="fw-bold mb-3">What is VoteHub?</h3>
+                <p class="mb-4 text-muted">VoteHub is the official online voting platform for student organizations and campus governance at Mindoro State University. It simplifies election setup, voting, and result reporting in one secure dashboard.</p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i><strong>Secure authentication:</strong> Only eligible voters can participate.</li>
+                    <li class="mb-3"><i class="fas fa-poll text-success me-2"></i><strong>Clear ballots:</strong> Candidates are grouped by position for easy selection.</li>
+                    <li class="mb-3"><i class="fas fa-chart-bar text-success me-2"></i><strong>Trusted results:</strong> Visual graphs show position winners without exposing individual votes.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="about" class="info-section py-5">
+    <div class="row gy-4">
+        <div class="col-md-4">
+            <div class="feature-card h-100 p-4 shadow-sm">
+                <h5 class="mb-3">About MINSU</h5>
+                <p class="text-muted">Mindoro State University is committed to empowering students through leadership, development, and democratic participation. VoteHub supports this mission by delivering modern election tools to the campus community.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100 p-4 shadow-sm">
+                <h5 class="mb-3">Purpose</h5>
+                <p class="text-muted">VoteHub was designed to streamline campus elections, support transparent decision-making, and protect voter privacy while making every election easy to manage and easy to join.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100 p-4 shadow-sm">
+                <h5 class="mb-3">How It Works</h5>
+                <p class="text-muted">Students log in, browse open elections, and vote by position. Administrators set up ballots, then results appear as position-specific charts for a smooth, modern voting experience.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="elections-section py-5">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1><i class="fas fa-poll"></i> Available Elections</h1>
-            <p class="text-muted">Browse and participate in ongoing elections</p>
+            <h2 class="fw-bold">Ongoing Elections</h2>
+            <p class="text-muted">Current polls available for MINSU voters. Select an election to review candidates and submit your vote.</p>
         </div>
         <div class="col-md-4">
             <form method="get" action="/Home/Search" class="input-group">
                 <input type="text" name="keyword" class="form-control" placeholder="Search elections..." />
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-msu" type="submit">
                     <i class="fas fa-search"></i> Search
                 </button>
             </form>
@@ -22,49 +74,40 @@
 
     @if (Model != null && Model.Count > 0)
     {
-        <div class="row">
+        <div class="row gy-4">
             @foreach (var election in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4">
+                <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm election-card">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header bg-success text-white">
                             <h5 class="card-title mb-0">@election.Title</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted">
-                                <small>
-                                    <i class="fas fa-tag"></i> @election.Category
-                                </small>
+                            <p class="text-muted small mb-3">
+                                <i class="fas fa-tag"></i> @election.Category
                             </p>
-                            <p class="card-text">
+                            <p class="card-text text-muted">
                                 @if (!string.IsNullOrEmpty(election.Description))
                                 {
                                     @Html.Raw(election.Description.Length > 100 ? election.Description.Substring(0, 100) + "..." : election.Description)
                                 }
                             </p>
-                            <div class="mb-3">
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar"></i>
-                                    @election.StartDate.ToString("MMM dd, yyyy") - @election.EndDate.ToString("MMM dd, yyyy")
-                                </small>
-                            </div>
-                            <div class="mb-3">
-                                <small>
-                                    <i class="fas fa-user"></i> By: <strong>@election.Creator?.FullName</strong>
-                                </small>
+                            <div class="mb-3 small text-muted">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                @election.StartDate.ToString("MMM dd, yyyy") - @election.EndDate.ToString("MMM dd, yyyy")
                             </div>
                             <div>
-                                <span class="badge bg-success">
+                                <span class="badge bg-success me-1">
                                     <i class="fas fa-users"></i> @election.Candidates.Count Candidates
                                 </span>
-                                <span class="badge bg-info">
+                                <span class="badge bg-warning text-dark">
                                     <i class="fas fa-check"></i> @election.Votes.Count Votes
                                 </span>
                             </div>
                         </div>
-                        <div class="card-footer bg-light">
-                            <a href="/Election/Details/@election.ElectionId" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-eye"></i> View Details
+                        <div class="card-footer bg-light border-0">
+                            <a href="/Election/Details/@election.ElectionId" class="btn btn-sm btn-outline-success me-2">
+                                <i class="fas fa-eye"></i> View
                             </a>
                             @if (User.Identity.IsAuthenticated)
                             {
@@ -82,15 +125,13 @@
     {
         <div class="alert alert-info text-center py-5">
             <i class="fas fa-inbox fa-3x mb-3"></i>
-            <h5>No Elections Available</h5>
-            <p>No open elections at the moment. Please check back later.</p>
+            <h5>Nothing is open right now</h5>
+            <p class="mb-3">There are no active elections at the moment. Check back soon to participate in the next campus vote.</p>
             @if (!User.Identity.IsAuthenticated)
-            {
-                <p>
-                    <a href="/Account/Login" class="btn btn-primary mt-3">
-                        <i class="fas fa-sign-in-alt"></i> Login to Create Elections
-                    </a>
-                </p>
+                {
+                <a href="/Account/Login" class="btn btn-msu mt-3">
+                    <i class="fas fa-sign-in-alt"></i> Login to Join VoteHub
+                </a>
             }
         </div>
     }

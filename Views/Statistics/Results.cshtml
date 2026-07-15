@@ -1,7 +1,29 @@
-@model VoteHub.ViewModels.ElectionStatisticsViewModel
+﻿@model VoteHub.ViewModels.ElectionStatisticsViewModel
+@using System.Text.Json
+@using System.Text.RegularExpressions
 
 @{
     ViewData["Title"] = "Election Results";
+}
+
+@functions {
+    string SanitizePositionId(string position)
+    {
+        return Regex.Replace(position?.ToLowerInvariant() ?? string.Empty, "[^a-z0-9]+", "_").Trim('_');
+    }
+
+    string GetPartyColor(string party)
+    {
+        if (string.IsNullOrWhiteSpace(party))
+            return "#6c757d";
+
+        var colors = new[] { "#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1", "#fd7e14", "#20c997" };
+        var hash = 0;
+        foreach (var ch in party)
+            hash = (hash * 31) + ch;
+
+        return colors[Math.Abs(hash) % colors.Length];
+    }
 }
 
 <div class="container mt-5">
@@ -13,9 +35,9 @@
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card bg-light">
-                        <div class="card-body text-center">
+                            <div class="card-body text-center">
                             <h5>Total Votes</h5>
-                            <h2 class="text-primary">@Model.TotalVotes</h2>
+                            <h2 class="text-msu">@Model.TotalVotes</h2>
                         </div>
                     </div>
                 </div>
@@ -23,7 +45,7 @@
                     <div class="card bg-light">
                         <div class="card-body text-center">
                             <h5>Total Candidates</h5>
-                            <h2 class="text-info">@Model.TotalCandidates</h2>
+                            <h2 class="text-sage">@Model.TotalCandidates</h2>
                         </div>
                     </div>
                 </div>
@@ -39,7 +61,7 @@
                 </div>
             </div>
 
-            <hr>
+            <hr />
 
             <h4><i class="fas fa-list"></i> Candidate Rankings</h4>
             <div class="table-responsive mt-3">
@@ -70,6 +92,62 @@
                     </tbody>
                 </table>
             </div>
+
+            <hr />
+
+            <h4 class="mt-4">Position-by-Position Results</h4>
+            @foreach (var group in Model.CandidateStatistics.GroupBy(c => c.Position))
+            {
+                var orderedGroup = group.OrderByDescending(c => c.VoteCount).ToList();
+                var positionId = SanitizePositionId(group.Key);
+                var leader = orderedGroup.First();
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">@group.Key</h5>
+                                <p class="mb-1 text-muted">Leading candidate: <strong>@leader.Name</strong> (@leader.Party)</p>
+                                <p class="mb-0">@leader.VoteCount votes (@leader.Percentage.ToString("F2")%)</p>
+                            </div>
+                                <div class="text-md-end mt-3 mt-md-0">
+                                <span class="badge bg-msu me-2">Top @group.Key</span>
+                                <span class="badge bg-secondary">@orderedGroup.Count() candidates</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Candidate</th>
+                                        <th>Party</th>
+                                        <th>Votes</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < orderedGroup.Count; i++)
+                                    {
+                                        var stat = orderedGroup[i];
+                                        <tr>
+                                            <td>@(i + 1)</td>
+                                            <td><strong>@stat.Name</strong></td>
+                                            <td>@stat.Party</td>
+                                            <td>@stat.VoteCount</td>
+                                            <td>@stat.Percentage.ToString("F2")%</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <canvas id="chart_@positionId" style="max-height:320px; width:100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -77,3 +155,53 @@
         <i class="fas fa-arrow-left"></i> Back
     </a>
 </div>
+
+@section Scripts {
+    <script>
+        (function() {
+            var stats = @Html.Raw(JsonSerializer.Serialize(Model.CandidateStatistics));
+            var grouped = {};
+            stats.forEach(function(item) {
+                if (!grouped[item.Position]) grouped[item.Position] = [];
+                grouped[item.Position].push(item);
+            });
+
+            Object.keys(grouped).forEach(function(position) {
+                var items = grouped[position].sort(function(a, b) { return b.VoteCount - a.VoteCount; });
+                var labels = items.map(function(c) { return c.Name + ' (' + c.Party + ')'; });
+                var data = items.map(function(c) { return c.VoteCount; });
+                var colors = items.map(function(c) {
+                    var party = c.Party || '';
+                    var palette = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997'];
+                    var hash = 0;
+                    for (var i = 0; i < party.length; i++) hash = (hash * 31) + party.charCodeAt(i);
+                    return palette[Math.abs(hash) % palette.length];
+                });
+                var canvasId = 'chart_' + position.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+                var ctx = document.getElementById(canvasId);
+                if (!ctx) return;
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Votes',
+                            data: data,
+                            backgroundColor: colors
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: function(context) { return context.parsed.y + ' votes'; } } }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } }
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+}
